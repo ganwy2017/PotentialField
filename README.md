@@ -1,2 +1,9 @@
 # PotentialField
-Demonstrate the potential field algorithm for mobile robots on Matlab
+
+Usage:
+```
+>>> create_map
+```
+
+![Force Field](https://raw.githubusercontent.com/Arth-ur/PotentialField/master/screenshots/forcefield.png)
+![Inspect Forces And Compute Wheels Speeds](https://raw.githubusercontent.com/Arth-ur/PotentialField/master/screenshots/inspect.png)
