@@ -1,119 +1,312 @@
 function create_map()
-    WIDTH = 2000;
-    HEIGHT = 3000;
-    ROB_RADIUS = 130;
-    THRESHOLD = 700;
-
-    map = zeros(HEIGHT, WIDTH);
-
-    map(HEIGHT/2+50, WIDTH/2-150) = 1; 
-
-    [x,y] = meshgrid(0:50:WIDTH,0:50:HEIGHT);
-    u = zeros(size(x));
-    v = zeros(size(y));
-
-    [npx, npy] = size(x);
+    WIDTH = 2;
+    HEIGHT = 3;
+    ROB_RADIUS = 0.13;
+    THRESHOLD = 0.7;
+    K_REPULSIVE = -1;
+    K_ATTRACTIVE = 1e5;
+    myquiver = 0;
+    mycontour = 0;
+    attractiverectangle = 0;
+    ui= zeros(1, 12);
 
     sources = [];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( 0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( 0.150 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( 0.250 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( 0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.050 * 1000), HEIGHT / 2 + ( 0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.050 * 1000), HEIGHT / 2 + ( 0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.150 * 1000), HEIGHT / 2 + ( 0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( -0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( -0.150 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( -0.250 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.150 * 1000), HEIGHT / 2 + ( -0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.050 * 1000), HEIGHT / 2 + ( -0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.050 * 1000), HEIGHT / 2 + ( -0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.150 * 1000), HEIGHT / 2 + ( -0.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.250 * 1000), HEIGHT / 2 + ( 0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.350 * 1000), HEIGHT / 2 + ( 0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.450 * 1000), HEIGHT / 2 + ( 0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.450 * 1000), HEIGHT / 2 + ( -0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.350 * 1000), HEIGHT / 2 + ( -0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.250 * 1000), HEIGHT / 2 + ( -0.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.950 * 1000), HEIGHT / 2 + ( -0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.850 * 1000), HEIGHT / 2 + ( -0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.750 * 1000), HEIGHT / 2 + ( -0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.650 * 1000), HEIGHT / 2 + ( -0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.550 * 1000), HEIGHT / 2 + ( -0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.950 * 1000), HEIGHT / 2 + ( 0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.850 * 1000), HEIGHT / 2 + ( 0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.750 * 1000), HEIGHT / 2 + ( 0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.650 * 1000), HEIGHT / 2 + ( 0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (-0.550 * 1000), HEIGHT / 2 + ( 0.850 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( -1.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( -1.150 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( -1.250 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( -1.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( -1.450 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( 1.050 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( 1.150 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( 1.250 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( 1.350 * 1000), SourceType.REPULSIVE)];
-    sources = [sources Source(WIDTH/2 + (0.450 * 1000), HEIGHT / 2 + ( 1.450 * 1000), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( 0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( 0.150 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( 0.250 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( 0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.050 ), HEIGHT / 2 + ( 0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.050 ), HEIGHT / 2 + ( 0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.150 ), HEIGHT / 2 + ( 0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( -0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( -0.150 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( -0.250 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( -0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.050 ), HEIGHT / 2 + ( -0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.050 ), HEIGHT / 2 + ( -0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.150 ), HEIGHT / 2 + ( -0.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.250 ), HEIGHT / 2 + ( 0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.350 ), HEIGHT / 2 + ( 0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.450 ), HEIGHT / 2 + ( 0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.450 ), HEIGHT / 2 + ( -0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.350 ), HEIGHT / 2 + ( -0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.250 ), HEIGHT / 2 + ( -0.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.950 ), HEIGHT / 2 + ( -0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.850 ), HEIGHT / 2 + ( -0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.750 ), HEIGHT / 2 + ( -0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.650 ), HEIGHT / 2 + ( -0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.550 ), HEIGHT / 2 + ( -0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.950 ), HEIGHT / 2 + ( 0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.850 ), HEIGHT / 2 + ( 0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.750 ), HEIGHT / 2 + ( 0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.650 ), HEIGHT / 2 + ( 0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (-0.550 ), HEIGHT / 2 + ( 0.850 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( -1.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( -1.150 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( -1.250 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( -1.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( -1.450 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( 1.050 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( 1.150 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( 1.250 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( 1.350 ), SourceType.REPULSIVE)];
+    sources = [sources Source(WIDTH/2 + (0.450 ), HEIGHT / 2 + ( 1.450 ), SourceType.REPULSIVE)];
+    
+    for i=0:32
+        sources = [sources Source(WIDTH/2 + (-1.050), HEIGHT / 2 + ( -1.550+i*0.100 ), SourceType.REPULSIVE)];
+        sources = [sources Source(WIDTH/2 + (1.050), HEIGHT / 2 + ( -1.550+i*0.100 ), SourceType.REPULSIVE)];
+    end
+    
+    for i=0:22
+        sources = [sources Source(WIDTH/2 + (-1.050+i*0.100), HEIGHT / 2 + ( -1.550 ), SourceType.REPULSIVE)];
+        sources = [sources Source(WIDTH/2 + (-1.050+i*0.100), HEIGHT / 2 + ( 1.550 ), SourceType.REPULSIVE)];
+    end
+    
+    attractiveSource = Source(WIDTH/2 + ( -1 ), HEIGHT / 2 + ( 0 ), SourceType.ATTRACTIVE);
+    sources = [sources attractiveSource];
 
-    function compute_field(source,event)
+    function set_threshold(source, event)
+        THRESHOLD = source.Value;
+        
+        redraw()
+    end
+
+    function set_repulsive_gain(source, event)
+        K_REPULSIVE = -10 ^ source.Value;
+        redraw()
+    end
+
+    function set_attractive_gain(source, event)
+        K_ATTRACTIVE = 10 ^ source.Value;
+        redraw()
+    end
+
+    function resize_cb(~, ~)
+        create_ui()
+    end
+    
+    function button_down_cb(source, event)
+        if event.Button == 1
+            attractiveSource.x = event.IntersectionPoint(1);
+            attractiveSource.y = event.IntersectionPoint(2);
+            sources = [ sources(1:end-1) attractiveSource];
+            redraw();
+        elseif event.Button == 3
+            figure(2)
+            
+            F = compute_all_forces(event.IntersectionPoint(1), event.IntersectionPoint(2));
+            
+            subplot(2,2,1)
+            
+            theta = atan2(F(2,:), F(1,:));
+            mag = log(sqrt(F(2,:).^2 + F(1,:).^2));
+            compass(cos(theta) .* mag, sin(theta) .* mag);
+            title('Forces (log scale)')
+            
+            subplot(2,2,2)
+            fx = sum(F(1,:));
+            fy = sum(F(2,:));
+            compass(fx, fy);
+            title('Total force')
+            
+            ftheta = atan2(fy, fx);
+            theta = 0:0.001:2*pi;
+            l_speed = zeros(1, numel(theta));
+            r_speed = zeros(1, numel(theta));
+            for i=1:numel(theta)
+                robot_relative_theta = (theta(i) - ftheta);
+                robot_relative_theta = robot_relative_theta - 2*pi*floor( (robot_relative_theta+pi)/(2*pi) ); 
+                if robot_relative_theta <= pi/4 && robot_relative_theta >= -pi/4
+                    l_speed(i) = 1-sin(robot_relative_theta);
+                    r_speed(i) = 1+sin(robot_relative_theta);
+                elseif(robot_relative_theta > pi/4 && robot_relative_theta < 3*pi/4)
+                    l_speed(i) = 1;
+                    r_speed(i) = -1;
+                elseif((robot_relative_theta >= 3*pi/4 && robot_relative_theta <= -pi) || (robot_relative_theta >= -pi && robot_relative_theta <= -3*pi/4))
+                    l_speed(i) = 1;
+                    r_speed(i) = -1;
+                elseif(robot_relative_theta > -3*pi/4 && robot_relative_theta < -pi/4)
+                    l_speed(i) = -1;
+                    r_speed(i) = 1;
+                end
+            end
+            
+            subplot(2,1,2);
+            polarplot(theta, l_speed, 'b:', theta, r_speed, 'r:');
+            title('Wheel Speed wrt Absolute Robot Orientation')
+            legend('Left wheel', 'Right wheel')
+        end
+        
+    end
+
+    function F = compute_all_forces(px, py)
+        F = zeros(2, length(sources));
+        for si = 1:length(sources)
+            s = sources(si);
+            dist_x = (s.x - px);
+            dist_y = (s.y - py);
+            dist_min = max(0, sqrt(dist_x * dist_x + dist_y * dist_y)) - ROB_RADIUS;
+            if s.type == SourceType.REPULSIVE && dist_min < THRESHOLD && dist_min > 0
+                F(1, si) = K_REPULSIVE * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_x/dist_min);
+                F(2, si) = K_REPULSIVE * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_y/dist_min);
+            elseif s.type == SourceType.ATTRACTIVE
+                F(1, si) = K_ATTRACTIVE * dist_x;
+                F(2, si) = K_ATTRACTIVE * dist_y;
+            else
+                F(1, si) = 0;
+                F(2, si)= 0;
+            end
+        end 
+    end
+
+    function [fx, fy] = compute_force(px, py)
+        F = compute_all_forces(px, py);
+        fx = sum(F(1,:));
+        fy = sum(F(2,:));
+    end
+
+    function compute_field()
+        [x,y] = meshgrid(0:0.1:WIDTH,0:0.1:HEIGHT);
+        u = zeros(size(x));
+        v = zeros(size(y));
+        [npx, npy] = size(x);
         for pi=1:npx
+            if mod(pi, 10) == 0
+                waitbar(pi/npx)
+            end
             for pj=1:npy
-                fx = 0;
-                fy = 0;
 
                 px = x(pi, pj);
                 py = y(pi, pj);
-
-                for si = 1:length(sources)
-                    s = sources(si);
-                    dist_x = (s.x - px);
-                    dist_y = (s.y - py);
-                    dist_min = sqrt(dist_x * dist_x + dist_y * dist_y) - ROB_RADIUS;
-                    if s.type == SourceType.REPULSIVE && dist_min < THRESHOLD
-                        myfx = s.type.K * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_x/dist_min);
-                        myfy = s.type.K * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_y/dist_min);
-                    else
-                        myfx = 0;
-                        myfy = 0;
-                    end
-
-                    fx = fx + myfx;
-                    fy = fy + myfy;
-                end
+                
+                [fx, fy] = compute_force(px, py);
+                
                 u(pi, pj) = fx;
                 v(pi, pj) = fy;
             end
         end
-        quiver(x,y,u,v)
+        
+        if myquiver ~= 0
+            delete(myquiver)
+        end
+        if mycontour ~= 0
+            delete(mycontour)
+        end
+        
+     %   [~, mycontour] = contour(x, y, sqrt(u.^2 + v.^2), 3, 'Parent', gca, 'HitTest', 'off', 'Color', 'b');
+        myquiver = quiver(x,y,u,v, 'Parent', gca, 'HitTest', 'off', 'Color', 'b');
     end
 
-    figure
-    hold on
-
-    % Create slider
-    sld = uicontrol('Style', 'slider',...
-        'Min',1,'Max',3000,'Value',700,...
-        'Position', [400 20 120 20],...
-        'Callback', @compute_field); 
-
-    for i=1:length(sources)
-        source = sources(i);
-        rectangle('Position',[source.x-50 source.y-50 100 100],...
-            'FaceColor',[0.6275 0.0196 0.0196],...
-            'EdgeColor', [0.6275 0.0196 0.0196],...
-            'LineWidth', 0.001)
-        rectangle('Position',[source.x source.y 10 10],...
-            'FaceColor','r',...
-            'EdgeColor', 'r',...
-            'Curvature', [1 1],...
-            'LineWidth', 0.001)
+    function create_ui()
+        for i = 1:numel(ui)
+           if ui(i) ~=0
+               delete(ui(i))
+           end
+        end
+        % Create slider
+        ui(1) = uicontrol('Style', 'slider',...
+            'Min',0.0001,'Max',3,'Value',(THRESHOLD),...
+            'Position', [50 20 120 20],...
+            'Callback', @set_threshold);
+        ui(2) = uicontrol('Style', 'slider',...
+            'Min',0,'Max',25,'Value', log10(K_ATTRACTIVE),...
+            'Position', [200 20 120 20],...
+            'Callback', @set_attractive_gain);
+        
+        ui(3) =uicontrol('Style', 'slider',...
+            'Min',0,'Max',10,'Value', log10(-K_REPULSIVE),...
+            'Position', [350 20 120 20],...
+            'Callback', @set_repulsive_gain);
+        
+        ui(4) =uicontrol('Style','text',...
+            'Position',[50 45 120 20],...
+            'String',['THRE' num2str(THRESHOLD, '%10.3e')]);
+        ui(5) =uicontrol('Style','text',...
+            'Position',[200 45 120 20],...
+            'String',['KATT' num2str(K_ATTRACTIVE, '%10.3e')]);
+        ui(6) =uicontrol('Style','text',...
+            'Position',[350 45 120 20],...
+            'String',['KREP' num2str(K_REPULSIVE, '%10.3e')]);
+        
+        pos = get(gcf, 'Position');
+        height = pos(4);
+        ui(7) =uicontrol('Style','text',...
+            'Position',[50 height - 60 200 40],...
+            'String','Left click to set attractive source. Right click to inspect field.');
     end
 
-    quiver(x,y,u,v)
-    axis square
-    axis([0 2000 0 3000])
+    function redraw()
+        hwait = waitbar(0, 'Computing sources');
+        figure(1)
+        hold on
+        if myquiver ~= 0
+            delete(myquiver)
+        end
+        if mycontour ~= 0
+            delete(mycontour)
+        end
+        
+        waitbar(0, hwait, 'Computing field')
+        compute_field()
+        create_ui()
+        
+        if attractiverectangle ~= 0
+            delete(attractiverectangle)
+        end
+        attractiverectangle = rectangle('Position',[attractiveSource.x-0.001 attractiveSource.y-0.001 0.01 0.01],...
+            'FaceColor','g',...
+            'EdgeColor', 'g',...
+            'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
 
+        
+        axis square
+        axis([0 2 0 3]) 
+        close(hwait) 
+    end
+
+    function draw()
+        hwait = waitbar(0, 'Computing sources');
+
+        figure(1)
+        hold on
+                
+        for i=1:length(sources)
+            if mod(i, 10) == 0
+                waitbar(i/length(sources))
+            end
+            source = sources(i);
+            if source.type == SourceType.REPULSIVE
+                rectangle('Position',[source.x-0.050 source.y-0.050 0.1 0.1],...
+                    'FaceColor',[0.6275 0.0196 0.0196],...
+                    'EdgeColor', [0.6275 0.0196 0.0196],...
+                    'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off')
+                rectangle('Position',[source.x source.y 0.01 0.01],...
+                    'FaceColor','r',...
+                    'EdgeColor', 'r',...
+                    'Curvature', [1 1],...
+                    'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off')
+            end
+%             rectangle('Position',[source.x-THRESHOLD/2 source.y-THRESHOLD/2 THRESHOLD THRESHOLD],...
+%                 'EdgeColor', 'k',...
+%                 'Curvature', [1 1],...
+%                 'LineWidth', 0.001)
+        end
+        redraw()
+        
+        axis square
+        axis([0 2 0 3]) 
+        close(hwait) 
+        
+        
+        create_ui()
+    end
+
+    figure(1)
+    set(gcf, 'ResizeFcn', @resize_cb);
+    set(gca, 'ButtonDownFcn', @button_down_cb);
+    hold all
+    draw()
+    
     % create_cell(0, -0.150, 0.050, REPULSIVE_CELL);
     % create_cell(1, -0.150, 0.150, REPULSIVE_CELL);
     % create_cell(2, -0.150, 0.250, REPULSIVE_CELL);
