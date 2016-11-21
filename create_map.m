@@ -9,6 +9,7 @@ function create_map()
     mycontour = 0;
     attractiverectangle = 0;
     ui= zeros(1, 12);
+    targetpoint = 0;
 
     sources = [];
     sources = [sources Source(WIDTH/2 + (-0.150 ), HEIGHT / 2 + ( 0.050 ), SourceType.REPULSIVE)];
@@ -92,6 +93,17 @@ function create_map()
             sources = [ sources(1:end-1) attractiveSource];
             redraw();
         elseif event.Button == 3
+            figure(1)
+            
+            if targetpoint ~= 0
+                delete(targetpoint)
+            end
+            targetpoint = rectangle('Position',[event.IntersectionPoint(1)-0.005, event.IntersectionPoint(2)-0.005 0.01 0.01],...
+                'FaceColor','r',...
+                'EdgeColor', 'g',...
+                'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
+
+            
             figure(2)
             
             F = compute_all_forces(event.IntersectionPoint(1), event.IntersectionPoint(2));
@@ -253,7 +265,7 @@ function create_map()
         if attractiverectangle ~= 0
             delete(attractiverectangle)
         end
-        attractiverectangle = rectangle('Position',[attractiveSource.x-0.001 attractiveSource.y-0.001 0.01 0.01],...
+        attractiverectangle = rectangle('Position',[attractiveSource.x-0.005 attractiveSource.y-0.005 0.01 0.01],...
             'FaceColor','g',...
             'EdgeColor', 'g',...
             'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
