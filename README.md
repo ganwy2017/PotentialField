@@ -1,5 +1,7 @@
 # PotentialField
 
+*Requires version R2016a*
+
 Usage:
 ```
 >>> create_map
