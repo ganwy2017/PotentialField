@@ -6,6 +6,8 @@ classdef Source
         type;
         x;
         y;
+        customk = 0;
+        force = 0;
     end
     
     methods

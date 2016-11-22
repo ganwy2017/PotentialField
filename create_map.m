@@ -15,7 +15,8 @@ function create_map()
     giny = 0;
     doanimate = 0;
     trace = zeros(1, 500);
-    speed = 0.01;
+    speed = 0.05;
+    distances_to_go = [];
 
     sources = [];
     sources = [sources Source( (-0.150 ),  ( 0.050 ), SourceType.REPULSIVE)];
@@ -106,6 +107,7 @@ function create_map()
             for i=1:numel(trace)
                 if trace(i) ~= 0
                    delete(trace(i)) 
+                   trace(i) = 0;
                 end
             end
         else
@@ -223,10 +225,35 @@ function create_map()
             end
         end
 
-        subplot(2,1,2);
+        subplot(2,2,3);
         polarplot(theta, l_speed, 'b:', theta, r_speed, 'r:');
         title('Wheel Speed wrt Absolute Robot Orientation')
         legend('Left wheel', 'Right wheel') 
+        
+        distance_to_go = norm([inx iny] - [attractiveSource.x attractiveSource.y]);
+        angle_to_go = atan2(attractiveSource.y - iny, attractiveSource.x - inx);
+        
+        distances_to_go = [distances_to_go distance_to_go];
+        subplot(2,2,4);
+        plot(distances_to_go);
+        if numel(distances_to_go) > 4 &&...
+            (max(distances_to_go(end-4:end)) - min(distances_to_go(end-4:end))) < speed * 0.99
+            title('Distance to objective (trapped)')
+            figure(1)
+            nsx = inx+cos(angle_to_go + rand/2)*speed*1.1;
+            nsy = iny+sin(angle_to_go + rand/2)*speed*1.1;
+            ns = Source(nsx, nsy, SourceType.UNIFORM_CIRCULAR_REPULSIVE);
+            ns.force = -K_ATTRACTIVE * distance_to_go * 1.1;
+            rectangle('Position', [ nsx-0.01 nsy-0.01 0.02 0.02],...
+                'FaceColor','g',...
+                'EdgeColor', 'g',...
+                'Curvature', [1 1],...
+                'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
+            sources = [sources ns];
+            
+        else
+            title('Distance to objective')
+        end
     end
 
     function F = compute_all_forces(px, py)
@@ -236,12 +263,25 @@ function create_map()
             dist_x = (s.x - px);
             dist_y = (s.y - py);
             dist_min = max(0, sqrt(dist_x * dist_x + dist_y * dist_y)) - ROB_RADIUS;
-            if s.type == SourceType.REPULSIVE && dist_min < THRESHOLD && dist_min > 0
-                F(1, si) = K_REPULSIVE * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_x/dist_min);
-                F(2, si) = K_REPULSIVE * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_y/dist_min);
+            if s.type == SourceType.REPULSIVE ||...
+                    s.type == SourceType.CUSTOM_REPULSIVE &&...
+                    s.type == SourceType.HIGHLY_REPULSIVE &&...
+                    dist_min < THRESHOLD && dist_min > 0
+                k = K_REPULSIVE;
+                if s.type == SourceType.HIGHLY_REPULSIVE
+                    k = k * 100;
+                elseif s.type == SourceType.CUSTOM_REPULSIVE
+                    k = s.customk;
+                end
+                
+                F(1, si) = k * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_x/dist_min);
+                F(2, si) = k * (1 / dist_min - 1 / THRESHOLD) * (1/(dist_min*dist_min)) * (dist_y/dist_min);
             elseif s.type == SourceType.ATTRACTIVE
                 F(1, si) = K_ATTRACTIVE * dist_x;
                 F(2, si) = K_ATTRACTIVE * dist_y;
+            elseif s.type == SourceType.UNIFORM_CIRCULAR_REPULSIVE
+                F(1, si) = s.force * cos(atan2(dist_y, dist_x));
+                F(2, si) = s.force * sin(atan2(dist_y, dist_x));
             else
                 F(1, si) = 0;
                 F(2, si)= 0;
