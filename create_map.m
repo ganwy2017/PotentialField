@@ -17,6 +17,66 @@ function create_map()
     trace = zeros(1, 500);
     speed = 0.05;
     distances_to_go = [];
+    relations = [];
+    pathlines = zeros(1, 50);
+    
+    bigcells = [];
+    bigcells = [bigcells Cell(0, -1.000, -0.500, 0.830, 1.500)];
+    bigcells = [bigcells Cell(1, -0.500, 0.500, 0.830, 1.500)];
+    bigcells = [bigcells Cell(2, 0.500, 1.000, 1.000, 1.500)];
+    bigcells = [bigcells Cell(3, -1.000, -0.500, 0.000, 0.830)];
+    bigcells = [bigcells Cell(4, -0.500, -0.200, 0.400, 0.830)];
+    bigcells = [bigcells Cell(5, -0.200, 0.200, 0.400, 0.830)];
+    bigcells = [bigcells Cell(6, 0.200, 0.500, 0.400, 0.830)];
+    bigcells = [bigcells Cell(7, 0.500, 1.000, 0.000, 1.000)];
+    bigcells = [bigcells Cell(8, -0.500, -0.200, 0.100, 0.400)];
+    bigcells = [bigcells Cell(9, 0.200, 0.500, 0.300, 0.400)];
+    bigcells = [bigcells Cell(10, -0.100, 0.200, -0.300, 0.300)];
+    bigcells = [bigcells Cell(11, 0.200, 0.500, -0.300, 0.300)];
+    bigcells = [bigcells Cell(12, -1.000, -0.500, -0.830, 0.000)];
+    bigcells = [bigcells Cell(13, -0.500, -0.200, -0.400, -0.100)];
+    bigcells = [bigcells Cell(14, 0.200, 0.500, -0.400, -0.300)];
+    bigcells = [bigcells Cell(15, 0.500, 1.000, -1, 0.000)];
+    bigcells = [bigcells Cell(16, -0.500, -0.200, -0.830, -0.400)];
+    bigcells = [bigcells Cell(17, -0.200, 0.200, -0.830, -0.400)];
+    bigcells = [bigcells Cell(18, 0.200, 0.500, -0.830, -0.400)];
+    bigcells = [bigcells Cell(19, -1.000, -0.500, -1.500, -0.830)];
+    bigcells = [bigcells Cell(20, -0.500, 0.500, -1.500, -0.830)];
+    bigcells = [bigcells Cell(21, 0.500, 1.000, -1.500, -1.000)];
+
+    relations = [relations Relation(0, 0, 1, Direction.WE)];
+    relations = [relations Relation(1, 1, 5, Direction.NS)];
+    relations = [relations Relation(2, 1, 4, Direction.NS)];
+    relations = [relations Relation(3, 1, 6, Direction.NS)];
+    relations = [relations Relation(4, 2, 7, Direction.NS)];
+    relations = [relations Relation(5, 4, 5, Direction.WE)];
+    relations = [relations Relation(6, 5, 6, Direction.WE)];
+    relations = [relations Relation(7, 6, 7, Direction.WE)];
+    relations = [relations Relation(8, 3, 4, Direction.WE)];
+    relations = [relations Relation(9, 3, 8, Direction.WE)];
+    relations = [relations Relation(10, 4, 8, Direction.NS)];
+    relations = [relations Relation(11, 6, 9, Direction.NS)];
+    relations = [relations Relation(12, 9, 7, Direction.WE)];
+    relations = [relations Relation(13, 10, 11, Direction.WE)];
+    relations = [relations Relation(14, 11, 7, Direction.WE)];
+    relations = [relations Relation(15, 7, 15, Direction.NS)];
+    relations = [relations Relation(16, 14, 15, Direction.WE)];
+    relations = [relations Relation(17, 15, 21, Direction.NS)];
+    relations = [relations Relation(18, 3, 12, Direction.NS)];
+    relations = [relations Relation(19, 12, 13, Direction.WE)];
+    relations = [relations Relation(20, 12, 16, Direction.WE)];
+    relations = [relations Relation(21, 13, 16, Direction.NS)];
+    relations = [relations Relation(22, 16, 17, Direction.WE)];
+    relations = [relations Relation(23, 17, 18, Direction.WE)];
+    relations = [relations Relation(24, 18, 15, Direction.WE)];
+    relations = [relations Relation(25, 16, 20, Direction.NS)];
+    relations = [relations Relation(26, 17, 20, Direction.NS)];
+    relations = [relations Relation(27, 18, 20, Direction.NS)];
+    relations = [relations Relation(28, 11, 15, Direction.WE)];
+    relations = [relations Relation(29, 19, 20, Direction.WE)];
+    relations = [relations Relation(30, 11, 14, Direction.NS)];
+    relations = [relations Relation(31, 11, 9, Direction.SN)];
+
 
     sources = [];
     sources = [sources Source( (-0.150 ),  ( 0.050 ), SourceType.REPULSIVE)];
@@ -76,7 +136,9 @@ function create_map()
     
     attractiveSource = Source( ( -1 ),  ( 0 ), SourceType.ATTRACTIVE);
     sources = [sources attractiveSource];
-
+    
+    path = [];
+    
     function set_threshold(source, event)
         THRESHOLD = source.Value;
         
@@ -175,7 +237,7 @@ function create_map()
 
     function [fx, fy] = inspectfield(inx, iny)
        figure(1)
-
+       
         if targetpoint ~= 0
             delete(targetpoint)
         end
@@ -185,7 +247,8 @@ function create_map()
             'Curvature', [1 1],...
             'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
 
-
+        path = compute_path(inx, iny, attractiveSource.x, attractiveSource.y);
+        
         figure(2)
 
         F = compute_all_forces(inx, iny);
@@ -225,34 +288,104 @@ function create_map()
             end
         end
 
-        subplot(2,2,3);
+        subplot(2,1,2);
         polarplot(theta, l_speed, 'b:', theta, r_speed, 'r:');
         title('Wheel Speed wrt Absolute Robot Orientation')
         legend('Left wheel', 'Right wheel') 
         
-        distance_to_go = norm([inx iny] - [attractiveSource.x attractiveSource.y]);
-        angle_to_go = atan2(attractiveSource.y - iny, attractiveSource.x - inx);
+%         distance_to_go = norm([inx iny] - [attractiveSource.x attractiveSource.y]);
+%         angle_to_go = atan2(attractiveSource.y - iny, attractiveSource.x - inx);
         
-        distances_to_go = [distances_to_go distance_to_go];
-        subplot(2,2,4);
-        plot(distances_to_go);
-        if numel(distances_to_go) > 4 &&...
-            (max(distances_to_go(end-4:end)) - min(distances_to_go(end-4:end))) < speed * 0.99
-            title('Distance to objective (trapped)')
-            figure(1)
-            nsx = inx+cos(angle_to_go + rand/2)*speed*1.1;
-            nsy = iny+sin(angle_to_go + rand/2)*speed*1.1;
-            ns = Source(nsx, nsy, SourceType.UNIFORM_CIRCULAR_REPULSIVE);
-            ns.force = -K_ATTRACTIVE * distance_to_go * 1.1;
-            rectangle('Position', [ nsx-0.01 nsy-0.01 0.02 0.02],...
-                'FaceColor','g',...
-                'EdgeColor', 'g',...
-                'Curvature', [1 1],...
-                'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
-            sources = [sources ns];
+%         distances_to_go = [distances_to_go distance_to_go];
+%         subplot(2,2,4);
+%         plot(distances_to_go);
+%         if numel(distances_to_go) > 4 &&...
+%             (max(distances_to_go(end-4:end)) - min(distances_to_go(end-4:end))) < speed * 0.99
+%             title('Distance to objective (trapped)')
+%             figure(1)
+%             nsx = inx+cos(angle_to_go + rand/2)*speed*1.1;
+%             nsy = iny+sin(angle_to_go + rand/2)*speed*1.1;
+%             ns = Source(nsx, nsy, SourceType.UNIFORM_CIRCULAR_REPULSIVE);
+%             ns.force = -K_ATTRACTIVE * distance_to_go * 1.1;
+%             rectangle('Position', [ nsx-0.01 nsy-0.01 0.02 0.02],...
+%                 'FaceColor','g',...
+%                 'EdgeColor', 'g',...
+%                 'Curvature', [1 1],...
+%                 'LineWidth', 0.001, 'Parent', gca, 'HitTest', 'off');
+%             %sources = [sources ns];
+%             
+%         else
+%             title('Distance to objective')
+%         end
+    end
+
+    function [path] = compute_path(robx, roby, targetx, targety)
+        robotCell = -1;
+        targetCell = -1;
+        path = [];
+        for i=1:numel(bigcells)
+           bigcell = bigcells(i);
+           if bigcell.inside(robx, roby)
+              robotCell = bigcell; 
+           end
+           if bigcell.inside(targetx, targety)
+              targetCell = bigcell; 
+           end
+        end
+        if isa(robotCell, 'Cell') && isa(targetCell, 'Cell')
+            path = big_path_finding(robotCell, targetCell, []);
+            for pathi=1:numel(pathlines)
+               if ~isa(pathlines(pathi), 'double')
+                   delete(pathlines(pathi));
+                   pathlines(pathi) = 0;
+               else
+                   break
+               end
+            end
+            for pathi=1:numel(path)-1
+                this = path(pathi);
+                next = path(pathi+1);
+                pathlines(pathi) = line([this.getCenterX() next.getCenterX()],...
+                    [this.getCenterY() next.getCenterY()],...
+                    'Color', 'c', 'Parent', gca, 'HitTest', 'off');
+            end
             
+        end
+    end
+
+    function [path] = big_path_finding(startCell, stopCell, history)
+        path = startCell;
+        shortest = -1;
+        subpath = [];
+        if startCell.id == stopCell.id
+            return 
+        end
+        for i=1:numel(relations)
+            rel = relations(i);
+            next = -1;
+            if rel.from == startCell.id
+                next = rel.to;
+                direction = rel.direction;
+            elseif rel.to == startCell.id
+                next = rel.from;
+                direction = rel.direction.getopposite();
+            end
+            
+         %   disp ([startCell.id rel.from rel.to next])
+            
+            if next < 0 || sum(next == history) > 0
+                continue
+            end
+            nextCell = bigcells(next + 1);
+            subpath = big_path_finding(nextCell, stopCell, [history startCell.id]);
+            if isa(subpath, 'Cell') && (isa(shortest, 'double') || numel(subpath) < numel(shortest))
+               shortest = subpath; 
+            end
+        end
+        if isa(shortest, 'double')
+            path = -1;
         else
-            title('Distance to objective')
+            path = [path shortest];
         end
     end
 
@@ -286,7 +419,24 @@ function create_map()
                 F(1, si) = 0;
                 F(2, si)= 0;
             end
-        end 
+        end
+        
+        K_STREAM = K_ATTRACTIVE * 1e9;
+        
+        for pathi=1:numel(path)-1
+            bigcell = path(pathi);
+            next = path(pathi + 1);
+            if bigcell.inside(px, py)
+                for reli=1:numel(relations)
+                    rel = relations(reli);
+                    if rel.from == bigcell.id && rel.to == next.id
+                        F = [F rel.direction.force*K_STREAM];
+                    elseif rel.to == bigcell.id && rel.from == next.id
+                        F = [F rel.direction.getopposite.force*K_STREAM];
+                    end
+                end
+            end
+        end
     end
 
     function [fx, fy] = compute_force(px, py)
@@ -381,7 +531,7 @@ function create_map()
         if mycontour ~= 0
             delete(mycontour)
         end
-        
+                
         waitbar(0, hwait, 'Computing field')
         compute_field()
         create_ui()
@@ -426,12 +576,24 @@ function create_map()
 %                 'Curvature', [1 1],...
 %                 'LineWidth', 0.001)
         end
-        redraw()
+        
+        for i=1:numel(bigcells)
+            bigcell = bigcells(i);
+            rectangle('Position', bigcell.asRectangle(),...
+                'EdgeColor', 'k',...
+                'LineStyle', '--',...
+                'Parent', gca,...
+                'HitTest', 'off');
+            text(bigcell.getCenterX(), bigcell.getCenterY(), num2str(bigcell.id),...
+                'Parent', gca,...
+                'HitTest', 'off');
+        end
+
+        redraw();
         
         axis([-WIDTH/2 WIDTH/2 -HEIGHT/2 HEIGHT/2]) 
         axis equal
-        close(hwait) 
-        
+        close(hwait)
         
         create_ui()
     end
@@ -441,64 +603,4 @@ function create_map()
     set(gca, 'ButtonDownFcn', @button_down_cb);
     hold all
     draw()
-    
-    
-    % create_cell(0, -0.150, 0.050, REPULSIVE_CELL);
-    % create_cell(1, -0.150, 0.150, REPULSIVE_CELL);
-    % create_cell(2, -0.150, 0.250, REPULSIVE_CELL);
-    % create_cell(3, -0.150, 0.350, REPULSIVE_CELL);
-    % create_cell(4, -0.050, 0.350, REPULSIVE_CELL);
-    % create_cell(5, 0.050, 0.350, REPULSIVE_CELL);
-    % create_cell(6, 0.150, 0.350, REPULSIVE_CELL);
-    % create_cell(7, -0.150, -0.050, REPULSIVE_CELL);
-    % create_cell(8, -0.150, -0.150, REPULSIVE_CELL);
-    % create_cell(9, -0.150, -0.250, REPULSIVE_CELL);
-    % 
-    % create_cell(10, -0.150, -0.350, REPULSIVE_CELL);
-    % create_cell(11, -0.050, -0.350, REPULSIVE_CELL);
-    % create_cell(12, 0.050, -0.350, REPULSIVE_CELL);
-    % create_cell(13, 0.150, -0.350, REPULSIVE_CELL);
-    % create_cell(14, -0.250, 0.050, REPULSIVE_CELL);
-    % create_cell(15, -0.350, 0.050, REPULSIVE_CELL);
-    % create_cell(16, -0.450, 0.050, REPULSIVE_CELL);
-    % create_cell(17, -0.450, -0.050, REPULSIVE_CELL);
-    % create_cell(18, -0.350, -0.050, REPULSIVE_CELL);
-    % create_cell(19, -0.250, -0.050, REPULSIVE_CELL);
-    % 
-    % create_cell(20, -0.950, -0.850, REPULSIVE_CELL);
-    % create_cell(21, -0.850, -0.850, REPULSIVE_CELL);
-    % create_cell(22, -0.750, -0.850, REPULSIVE_CELL);
-    % create_cell(23, -0.650, -0.850, REPULSIVE_CELL);
-    % create_cell(24, -0.550, -0.850, REPULSIVE_CELL);
-    % create_cell(25, -0.950, 0.850, REPULSIVE_CELL);
-    % create_cell(26, -0.850, 0.850, REPULSIVE_CELL);
-    % create_cell(27, -0.750, 0.850, REPULSIVE_CELL);
-    % create_cell(28, -0.650, 0.850, REPULSIVE_CELL);
-    % create_cell(29, -0.550, 0.850, REPULSIVE_CELL);
-    % 
-    % create_cell(30, 0.450, -1.050, REPULSIVE_CELL);
-    % create_cell(31, 0.450, -1.150, REPULSIVE_CELL);
-    % create_cell(32, 0.450, -1.250, REPULSIVE_CELL);
-    % create_cell(33, 0.450, -1.350, REPULSIVE_CELL);
-    % create_cell(34, 0.450, -1.450, REPULSIVE_CELL);
-    % create_cell(35, 0.450, 1.050, REPULSIVE_CELL);
-    % create_cell(36, 0.450, 1.150, REPULSIVE_CELL);
-    % create_cell(37, 0.450, 1.250, REPULSIVE_CELL);
-    % create_cell(38, 0.450, 1.350, REPULSIVE_CELL);
-    % create_cell(39, 0.450, 1.450, REPULSIVE_CELL);
-    % 
-    % create_cell(PATH_PLANNING_TARGET, 0, 0, VOID_CELL);
-    % 
-    % for(int i=0;i<32;i++){
-    %     create_cell(i+41, -1.050, -1.550+i*0.100, REPULSIVE_CELL);
-    %     create_cell(i+41+32, 1.050, -1.550+i*0.100, REPULSIVE_CELL);
-    % }
-    % 
-    % for(int i=0;i<22;i++){
-    %     create_cell(i+41+32+32, -1.050+i*0.100, -1.550, REPULSIVE_CELL);
-    %     create_cell(i+41+32+32+22, -1.050+i*0.100, 1.550, REPULSIVE_CELL);
-    % }
-    % 
-    % create_cell(PATH_PLANNING_OPP1, 0, 0, VOID_CELL);
-    % create_cell(PATH_PLANNING_OPP2, 0, 0, VOID_CELL);
 end
