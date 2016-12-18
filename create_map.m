@@ -19,39 +19,47 @@ function create_map()
     distances_to_go = [];
     relations = [];
     pathlines = zeros(1, 50);
-    
+     
     bigcells = [];
     bigcells = [bigcells Cell(0, -1.000, -0.500, 0.830, 1.500)];
     bigcells = [bigcells Cell(1, -0.500, 0.500, 0.830, 1.500)];
     bigcells = [bigcells Cell(2, 0.500, 1.000, 1.000, 1.500)];
-    bigcells = [bigcells Cell(3, -1.000, -0.500, 0.000, 0.830)];
+    bigcells = [bigcells Cell(3, -1.000, -0.500, 0.100, 0.830)];
     bigcells = [bigcells Cell(4, -0.500, -0.200, 0.400, 0.830)];
     bigcells = [bigcells Cell(5, -0.200, 0.200, 0.400, 0.830)];
     bigcells = [bigcells Cell(6, 0.200, 0.500, 0.400, 0.830)];
-    bigcells = [bigcells Cell(7, 0.500, 1.000, 0.000, 1.000)];
+    bigcells = [bigcells Cell(7, 0.500, 1.000, 0.000, 0.300)];
     bigcells = [bigcells Cell(8, -0.500, -0.200, 0.100, 0.400)];
     bigcells = [bigcells Cell(9, 0.200, 0.500, 0.300, 0.400)];
     bigcells = [bigcells Cell(10, -0.100, 0.200, -0.300, 0.300)];
     bigcells = [bigcells Cell(11, 0.200, 0.500, -0.300, 0.300)];
-    bigcells = [bigcells Cell(12, -1.000, -0.500, -0.830, 0.000)];
+    bigcells = [bigcells Cell(12, -1.000, -0.500, -0.830, -0.100)];
     bigcells = [bigcells Cell(13, -0.500, -0.200, -0.400, -0.100)];
     bigcells = [bigcells Cell(14, 0.200, 0.500, -0.400, -0.300)];
-    bigcells = [bigcells Cell(15, 0.500, 1.000, -1, 0.000)];
+    bigcells = [bigcells Cell(15, 0.500, 1.000, -0.300, 0.000)];
     bigcells = [bigcells Cell(16, -0.500, -0.200, -0.830, -0.400)];
     bigcells = [bigcells Cell(17, -0.200, 0.200, -0.830, -0.400)];
     bigcells = [bigcells Cell(18, 0.200, 0.500, -0.830, -0.400)];
     bigcells = [bigcells Cell(19, -1.000, -0.500, -1.500, -0.830)];
     bigcells = [bigcells Cell(20, -0.500, 0.500, -1.500, -0.830)];
     bigcells = [bigcells Cell(21, 0.500, 1.000, -1.500, -1.000)];
+    bigcells = [bigcells Cell(22, 0.500, 1.000, 0.400, 0.830)];
+    bigcells = [bigcells Cell(23, 0.500, 1.000, -0.830, -0.400)];
+    bigcells = [bigcells Cell(24, 0.500, 1.000, 0.300, 0.400)];
+    bigcells = [bigcells Cell(25, 0.500, 1.000,  -0.400, -0.300)];
+    bigcells = [bigcells Cell(26, -1.000, -0.500,  -0.100, 0.100)];
+    bigcells = [bigcells Cell(27, 0.500, 1.000,  -1.000, -0.830)];
+    bigcells = [bigcells Cell(28, 0.500, 1.000, 0.830, 1.000)];
 
+    
     relations = [relations Relation(0, 0, 1, Direction.WE)];
     relations = [relations Relation(1, 1, 5, Direction.NS)];
     relations = [relations Relation(2, 1, 4, Direction.NS)];
     relations = [relations Relation(3, 1, 6, Direction.NS)];
-    relations = [relations Relation(4, 2, 7, Direction.NS)];
+    relations = [relations Relation(4, 2, 28, Direction.NS)];
     relations = [relations Relation(5, 4, 5, Direction.WE)];
     relations = [relations Relation(6, 5, 6, Direction.WE)];
-    relations = [relations Relation(7, 6, 7, Direction.WE)];
+    relations = [relations Relation(7, 6, 22, Direction.WE)];
     relations = [relations Relation(8, 3, 4, Direction.WE)];
     relations = [relations Relation(9, 3, 8, Direction.WE)];
     relations = [relations Relation(10, 4, 8, Direction.NS)];
@@ -61,14 +69,14 @@ function create_map()
     relations = [relations Relation(14, 11, 7, Direction.WE)];
     relations = [relations Relation(15, 7, 15, Direction.NS)];
     relations = [relations Relation(16, 14, 15, Direction.WE)];
-    relations = [relations Relation(17, 15, 21, Direction.NS)];
+    relations = [relations Relation(17, 15, 25, Direction.NS)];
     relations = [relations Relation(18, 3, 12, Direction.NS)];
     relations = [relations Relation(19, 12, 13, Direction.WE)];
     relations = [relations Relation(20, 12, 16, Direction.WE)];
     relations = [relations Relation(21, 13, 16, Direction.NS)];
     relations = [relations Relation(22, 16, 17, Direction.WE)];
     relations = [relations Relation(23, 17, 18, Direction.WE)];
-    relations = [relations Relation(24, 18, 15, Direction.WE)];
+    relations = [relations Relation(24, 18, 23, Direction.WE)];
     relations = [relations Relation(25, 16, 20, Direction.NS)];
     relations = [relations Relation(26, 17, 20, Direction.NS)];
     relations = [relations Relation(27, 18, 20, Direction.NS)];
@@ -76,6 +84,13 @@ function create_map()
     relations = [relations Relation(29, 19, 20, Direction.WE)];
     relations = [relations Relation(30, 11, 14, Direction.NS)];
     relations = [relations Relation(31, 11, 9, Direction.SN)];
+    relations = [relations Relation(32, 23, 27, Direction.NS)];
+    relations = [relations Relation(33, 22, 24, Direction.NS)];
+    relations = [relations Relation(34, 14, 18, Direction.NS)];
+    relations = [relations Relation(35, 24, 7, Direction.NS)];
+    relations = [relations Relation(36, 25, 23, Direction.NS)];
+    relations = [relations Relation(37, 27, 21, Direction.NS)];
+    relations = [relations Relation(38, 28, 22, Direction.NS)];
 
 
     sources = [];
@@ -588,6 +603,15 @@ function create_map()
                 'Parent', gca,...
                 'HitTest', 'off');
         end
+        
+        for reli=1:numel(relations)
+                this = bigcells(relations(reli).from + 1);
+                next = bigcells(relations(reli).to + 1);
+                line([this.getCenterX()+rand()*0.05 next.getCenterX()+rand()*0.05],...
+                    [this.getCenterY()+rand()*0.05 next.getCenterY()+rand()*0.05],...
+                    'Color', 'c', 'Parent', gca, 'HitTest', 'off');
+        end
+
 
         redraw();
         
